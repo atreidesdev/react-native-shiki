@@ -7,6 +7,7 @@ import { StarRating } from './StarRating';
 import { EpisodesInput } from './EpisodesInput';
 import { useApi } from '../hooks/useApi';
 import { AuthContext } from "../context/AuthContext.tsx";
+import {debounce} from "../utils/debounce.ts";
 
 type Props = {
     userRate: any;
@@ -14,27 +15,6 @@ type Props = {
     titleId: number;
 };
 
-function debounce(func: () => void, delay: number): { (): void; cancel: () => void } {
-    let timer: NodeJS.Timeout | null = null;
-
-    const debouncedFunction = function (...args: any[]) {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-
-    debouncedFunction.cancel = () => {
-        if (timer) {
-            clearTimeout(timer);
-            timer = null;
-        }
-    };
-
-    return debouncedFunction;
-}
 
 const UserRateSection = ({ userRate, totalEpisodes, titleId }: Props) => {
     const [isStatusModalVisible, setIsStatusModalVisible] = useState(false);

@@ -9,28 +9,8 @@ import { EpisodesInput } from "./EpisodesInput";
 import { Title } from "../screens/UserListScreen";
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "../context/AuthContext.tsx";
+import {debounce} from "../utils/debounce.ts";
 
-function debounce(func: () => void, delay: number): { (): void; cancel: () => void } {
-    let timer: NodeJS.Timeout | null = null;
-
-    const debouncedFunction = function (...args: any[]) {
-        if (timer) {
-            clearTimeout(timer);
-        }
-        timer = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-
-    debouncedFunction.cancel = () => {
-        if (timer) {
-            clearTimeout(timer);
-            timer = null;
-        }
-    };
-
-    return debouncedFunction;
-}
 
 export const ListItem = ({ item }: { item: Title }) => {
     const [localScore, setLocalScore] = useState<number>(item.score || 0);
