@@ -61,19 +61,15 @@ const UserRateSection = ({ userRate, totalEpisodes, titleId }: Props) => {
             return;
         }
 
-        console.log('Current State:', {
-            userRateId,
-            localScore,
-            localEpisodes,
-            localStatus,
-        });
+        if (localStatus === 'не добавлен') return;
 
         if (userRateId) {
-            if (
-                localScore !== userRate.score ||
-                localEpisodes !== userRate.episodes ||
-                localStatus !== userRate.status
-            ) {
+            const hasChanges =
+                localStatus !== (userRate?.status || 'не добавлен') ||
+                localEpisodes !== (userRate?.episodes || 0) ||
+                localScore !== (userRate?.score || 0);
+
+            if (hasChanges) {
                 console.log('Обнаружены изменения для обновления:', {
                     score: localScore,
                     episodes: localEpisodes,
@@ -82,16 +78,13 @@ const UserRateSection = ({ userRate, totalEpisodes, titleId }: Props) => {
                 debouncedSaveChanges();
             }
         } else {
-            if (localStatus !== 'не добавлен') {
-                console.log('Добавление нового тайтла:', {
-                    status: localStatus,
-                });
-                debouncedSaveChanges();
-            } else {
-                console.log('Статус "не добавлен" — POST-запрос не отправлен.');
-            }
+            console.log('Добавление нового тайтла:', {
+                status: localStatus,
+            });
+
+            debouncedSaveChanges();
         }
-    }, [localScore, localEpisodes, localStatus]);
+    }, [localStatus, localScore, localEpisodes]);
 
     const saveChangesToServer = async () => {
         const requestData = {
@@ -133,7 +126,10 @@ const UserRateSection = ({ userRate, totalEpisodes, titleId }: Props) => {
 
     const debouncedSaveChanges = debounce(saveChangesToServer, 500);
 
-    return (
+    if (!userId){
+        return
+    }
+        return (
         <View style={styles.container}>
             {localStatus !== 'не добавлен' && (
                 <StarRating
